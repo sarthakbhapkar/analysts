@@ -1,0 +1,27 @@
+import requests
+from bs4 import BeautifulSoup
+
+# Define the URL of the Amazon page
+url = "https://www.amazon.in/s?k=bags&crid=2M096C61O4MLT&qid=1653308124&sprefix=ba%2Caps%2C283&ref=sr_pg_1"
+
+# Send an HTTP GET request
+response = requests.get(url)
+
+# Parse the HTML content
+soup = BeautifulSoup(response.content, "html.parser")
+
+# Extract product data
+product_urls = [a['href'] for a in soup.select('.s-result-item .s-link-normal')]
+product_names = [h2.text for h2 in soup.select('.s-result-item h2')]
+product_prices = [span.text for span in soup.select('.s-result-item span.a-price .a-offscreen')]
+product_ratings = [span.text for span in soup.select('.s-result-item .a-icon-star-small .a-icon-alt')]
+product_reviews = [span.text for span in soup.select('.s-result-item .a-size-small')]
+
+# Print or store the data as needed
+for i in range(len(product_urls)):
+    print(f"Product URL: {product_urls[i]}")
+    print(f"Product Name: {product_names[i]}")
+    print(f"Product Price: {product_prices[i]}")
+    print(f"Rating: {product_ratings[i]}")
+    print(f"Number of Reviews: {product_reviews[i]}")
+    print("\n")
