@@ -1,0 +1,32 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+# Create a CSV file to store the data
+csv_filename = "amazon_product_data.csv"
+csv_file = open(csv_filename, "w", newline="")
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(["Product URL", "Description", "ASIN", "Product Description", "Manufacturer"])
+
+# List of product URLs (replace with your URLs)
+product_urls = ["https://www.amazon.in/product_url_1", "https://www.amazon.in/product_url_2", ...]
+
+for url in product_urls:
+    # Send an HTTP GET request
+    response = requests.get(url)
+
+    # Parse the HTML content
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Extract product data
+    product_url = url
+    description = soup.select_one("#productDescription").text.strip() if soup.select_one("#productDescription") else ""
+    asin = soup.find("th", text="ASIN").find_next("td").text if soup.find("th", text="ASIN") else ""
+    product_description = soup.select_one("#productDescription").text.strip() if soup.select_one("#productDescription") else ""
+    manufacturer = soup.find("th", text="Manufacturer").find_next("td").text if soup.find("th", text="Manufacturer") else ""
+
+    # Write data to CSV file
+    csv_writer.writerow([product_url, description, asin, product_description, manufacturer])
+
+# Close the CSV file
+csv_file.close()
